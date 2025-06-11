@@ -41,9 +41,10 @@ public class Main {
 					System.out.println("Nenhuma tarefa cadastrada.");
 				}else {
 					System.out.println("\n--- Lista de Tarefas ---");
-					for (Tarefa l : lista) {
+					for (int i = 0; i < lista.size(); i++) {
+						Tarefa t = lista.get(i);
 						System.out.println(
-								l.getId() + " - Tarefa: " + l.getDescricao() + " - Status da tarefa: " + (l.isConcluida() ? "Concluída" : "Não concluída"));
+								(i + 1) + " - Tarefa: " + t.getDescricao() + " - Status da tarefa: " + (t.isConcluida() ? "Concluída" : "Não concluída"));
 					}
 				
 				}
@@ -51,46 +52,71 @@ public class Main {
 				break;
 				
 			case 3:
-				System.out.print("Digite o ID da tarefa: ");
-				int idBusca = sc.nextInt();
+				lista = dao.listar();
+				if (lista.isEmpty()) {
+					System.out.println("Nenhuma tarefa cadastrada.");
+					break;
+				}
+				System.out.print("Digite o número da tarefa: ");
+				int numStatus = sc.nextInt();
 				sc.nextLine();
 				
-				Tarefa buscada = dao.buscarPorId(idBusca);
 				System.out.println("--------------------");
-				if (buscada != null) {
-					System.out.println("Tarefa: " + buscada.getDescricao());
-					System.out.println("Status: " + (buscada.isConcluida() ? "Concluída" : "Não concluída"));
+				if (numStatus >= 1 && numStatus <= lista.size()) {
+					Tarefa t = lista.get(numStatus -1);
+					System.out.println("Tarefa: " + t.getDescricao());
+					System.out.println("Status: " + (t.isConcluida() ? "Concluída" : "Não concluída"));
 				}else {
 					System.out.println("Tarefa não encontrada.");
 				}
 				System.out.println();
 				break;
 				
-			case 4: 
-				System.out.print("Digite o ID da tarefa a ser atualizada: ");
-				int idStatus = sc.nextInt();
+			case 4:
+				lista = dao.listar();
+				if (lista.isEmpty()) {
+					System.out.println("Nenhuma tarefa cadastrada.");
+				}
+				System.out.print("Digite o número da tarefa a ser atualizada: ");
+				int numAtualizar = sc.nextInt();
 				sc.nextLine();
 				
+				if (numAtualizar >= 1 && numAtualizar <= lista.size()) {
+					Tarefa t = lista.get(numAtualizar -1);
+					
 				System.out.println("A tarefa foi concluída? [digite true para sim, false para não]: ");
 				boolean novoStatus = sc.nextBoolean();
 				sc.nextLine();
 				
-				Tarefa statusAtualizado = new Tarefa();
-				statusAtualizado.setId(idStatus);
-				statusAtualizado.setConcluida(novoStatus);
+				t.setConcluida(novoStatus);
+				dao.atualizar(t);
 				
-				dao.atualizar(statusAtualizado);
 				System.out.println("Status atualizado com sucesso!");
+				
+				}else {
+					System.out.println("Número inválido.");
+				}
 				System.out.println();
 				break;
 				
+				
 			case 5:
-				System.out.print("Digite o ID da tarefa a ser excluída: ");
-				int idExcluir = sc.nextInt();
+				lista = dao.listar();
+				if (lista.isEmpty()) {
+					System.out.println("Nenhuma tarefa cadastrada.");
+					break;
+				}
+				System.out.print("Digite o número da tarefa a ser excluída: ");
+				int numExcluir = sc.nextInt();
 				sc.nextLine();
-
-				dao.deletar(idExcluir);
+				
+				if (numExcluir >= 1 && numExcluir <= lista.size()) {
+					Tarefa t = lista.get(numExcluir -1);
+					dao.deletar(t.getId());
 				System.out.println("Tarefa excluída com sucesso!");
+				}else {
+					System.out.println("Número inválido.");
+				}
 				System.out.println();
 				break;
 
